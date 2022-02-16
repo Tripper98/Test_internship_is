@@ -11,7 +11,7 @@ ___
 
 By : [DRIOUCHE adnane](https://www.linkedin.com/in/adnane-driouche-275763177/)
 
-The results are hosted on [Github pages](https://tripper98.github.io/Test_Internship/main.html).
+The results are hosted on [Github pages](https://tripper98.github.io/Test_internship_is/main.html).
 ___
 
 To run the code, please follow these steps:
