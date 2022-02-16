@@ -26,7 +26,7 @@ conda create -n Ipsos python = 3.6
 pip install requirements.txt 
 ```
 
-3. If you have some problems while removing stop words, just install :
+3. If you have some problems while removing stop words, just do :
 ```
 nltk.download('stopwords')
 nltk.download('punkt')
