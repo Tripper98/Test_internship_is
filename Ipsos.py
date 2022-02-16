@@ -78,10 +78,12 @@ class Data():
 
        
     def clean_text(self, text):  
-
-        tags = r'@[^ ]+'                   
+        # Removing tags
+        tags = r'@[^ ]+'   
+        # Removnig urls                
         rm_urls = r'https?://[A-Za-z0-9./]+'  
-        pat3 = r'\'s'                      
+        pat3 = r'\'s'   
+        # Removing Hashes                   
         rm_hash = r'\#\w+'                     
         pat5 = r'&amp '                     
         pat6 = r'[^A-Za-z\s]'               
@@ -91,12 +93,14 @@ class Data():
 
 
     def get_polarity(self):
-
+        # To annotate data, I used Textblob
+        # That it returns polarity of each sentence
         print("[!] Adding Polarity to Dataframe ...")
         for row in self.df.itertuples():
                 tweet = self.df.at[row[0], 'cleaned_text']
-                #run sentiment using TextBlob
+                # run sentiment using TextBlob
                 analysis = TextBlob(tweet)
+                # If polarity > 0 -> That means it's a positive sentence
                 if analysis.sentiment[0]>0:
                     self.df.at[row[0], 'Sentiment'] = "Positive"
                 elif analysis.sentiment[0]<0:
@@ -185,6 +189,7 @@ class ML():
 
     def __init__(self, path) :
         self.df = pd.read_csv(path)
+        # Whole_data is the one that I'm going to project my models on it
         self.whole_data = pd.read_excel('Data_internship_test_anonymized.xlsx', engine='openpyxl')
         self.porter = PorterStemmer()
 
@@ -252,16 +257,21 @@ class ML():
         print("[!] Predicting values ...")
         # Predict values for Test dataset
         y_pred = model.predict(X_test)
+
         print("[!] Evaluating the model ...")
         # Print the evaluation metrics for the dataset.
         print(classification_report(y_test, y_pred))
+
         # Compute and plot the Confusion matrix
         cf_matrix = confusion_matrix(y_test, y_pred)
+
         categories = ['Negative','Positive']
         group_names = ['True Neg','False Pos', 'False Neg','True Pos']
         group_percentages = ['{0:.2%}'.format(value) for value in cf_matrix.flatten() / np.sum(cf_matrix)]
         labels = [f'{v1}n{v2}' for v1, v2 in zip(group_names,group_percentages)]
         labels = np.asarray(labels).reshape(2,2)
+
+        # Plotting confusion matrix
         sns.heatmap(cf_matrix, annot = labels, cmap = 'Blues',fmt = '',
         xticklabels = categories, yticklabels = categories)
         plt.xlabel("Predicted values", fontdict = {'size':14}, labelpad = 10)
@@ -272,7 +282,9 @@ class ML():
 
 
     def remove_stop_words(self, text):
-
+        # Removing stop words like : the, is ... 
+        # I used nltk. Don't forget to download nltk.download('stopwords')
+        # It's not included in nltk
         stop_words = set(stopwords.words('english'))
 
         word_tokens = word_tokenize(text)
@@ -289,7 +301,7 @@ class ML():
 
 
     def clean_text(self, text):  
-
+        # Cleaning texts same as the first class 
         tags = r'@[^ ]+'                   
         rm_urls = r'https?://[A-Za-z0-9./]+'  
         pat3 = r'\'s'                      
@@ -302,8 +314,9 @@ class ML():
 
 
     def stemSentence(self, sentence):
-
-        token_words=word_tokenize(sentence)
+        # To apply stemmer on each sentence
+        # I used PorterStemmer class
+        token_words = word_tokenize(sentence)
         token_words
         stem_sentence=[]
         for word in token_words:
@@ -314,16 +327,14 @@ class ML():
 
 
 
-# Création de mon modèle RNN
+# Building LSTM model 
 class RNN(torch.nn.Module):
     
     def __init__(self, input_dim, embedding_dim, hidden_dim, output_dim):
         super().__init__()
 
         self.embedding = torch.nn.Embedding(input_dim, embedding_dim)
-        #self.rnn = torch.nn.RNN(embedding_dim,
-        #                        hidden_dim,
-        #                        nonlinearity='relu')
+        
         self.rnn = torch.nn.LSTM(embedding_dim,
                                  hidden_dim)        
         
